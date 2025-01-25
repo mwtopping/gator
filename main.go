@@ -27,6 +27,7 @@ func main() {
 	t_command := command{name: args_input[1], args: args_input[2:]}
 	cerr := all_commands.run(&prg_state, t_command)
 	if cerr != nil {
+		os.Exit(1)
 		fmt.Println(cerr)
 	}
 }

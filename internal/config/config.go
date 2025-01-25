@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-const package_loc string = "/workspace/github.com/mwtopping/gator/"
-const configfile string = ".gatorconfig.json"
+// const package_loc string = "/workspace/github.com/mwtopping/gator/"
+const configfile string = "/.gatorconfig.json"
 
 type Config struct {
 	DbURL    string `json:"db_url"`
@@ -22,7 +22,7 @@ func (c *Config) SetUser(username string) {
 
 	home_dir, _ := os.UserHomeDir()
 
-	err := os.WriteFile(home_dir+package_loc+configfile, bytes, 0666)
+	err := os.WriteFile(home_dir+configfile, bytes, 0666)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -37,7 +37,7 @@ func Read() (Config, error) {
 	}
 
 	// read in json bytes
-	bytes, read_err := os.ReadFile(home_dir + package_loc + configfile)
+	bytes, read_err := os.ReadFile(home_dir + configfile)
 	if read_err != nil {
 		return Config{}, read_err
 	}
