@@ -6,20 +6,6 @@ import (
 	"os"
 )
 
-//This package should have the following functionality exported so the main package can use it:
-//
-//    Export a Config struct that represents the JSON file structure, including struct tags.
-//    Export a Read function that reads the JSON file found at ~/.gatorconfig.json and returns a Config struct. It should read the file from the HOME directory, then decode the JSON string into a new Config struct. I used os.UserHomeDir to get the location of HOME.
-//    Export a SetUser method on the Config struct that writes the config struct to the JSON file after setting the current_user_name field.
-//
-//I also wrote a few non-exported helper functions and added a constant to hold the filename.
-//
-//    getConfigFilePath() (string, error)
-//    write(cfg Config) error
-//    const configFileName = ".gatorconfig.json"
-//
-//But you can implement the internals of the package however you like.
-
 const package_loc string = "/workspace/github.com/mwtopping/gator/"
 const configfile string = ".gatorconfig.json"
 
@@ -40,6 +26,7 @@ func (c *Config) SetUser(username string) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Printf("Username has been set to: %v", username)
 }
 
 func Read() (Config, error) {
