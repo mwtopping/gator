@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"gator/internal/database"
+	"github.com/google/uuid"
+	"time"
 )
 
 type command struct {
@@ -18,8 +22,39 @@ func handlerLogin(s *state, cmd command) error {
 		return fmt.Errorf("Not enough arguments, login command expects username")
 	}
 
-	s.config.SetUser(cmd.args[0])
+	_, err := s.db.GetUser(context.Background(), cmd.args[0])
+	if err != nil {
+		fmt.Println("User Doesn't exist")
+		return err
+	}
 
+	s.cfg.SetUser(cmd.args[0])
+
+	return nil
+}
+
+func handlerRegister(s *state, cmd command) error {
+	if len(cmd.args) == 0 {
+		return fmt.Errorf("Not enough arguments, register command expects username")
+	}
+
+	// check if name exists already
+	_, err := s.db.GetUser(context.Background(), cmd.args[0])
+	if err == nil {
+		fmt.Println("User already exists")
+		return fmt.Errorf("User already exists")
+	}
+
+	// create user in db
+	newUser := database.CreateUserParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name:      cmd.args[0]}
+
+	s.db.CreateUser(context.Background(), newUser)
+	s.cfg.SetUser(cmd.args[0])
+	fmt.Printf("Successfully added User: %v\n", cmd.args[0])
 	return nil
 }
 
