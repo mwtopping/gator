@@ -35,6 +35,12 @@ func main() {
 	all_commands := commands{coms: make(map[string]func(*state, command) error, 0)}
 	all_commands.register("login", handlerLogin)
 	all_commands.register("register", handlerRegister)
+	all_commands.register("reset", handlerReset)
+	all_commands.register("users", handlerListUsers)
+	all_commands.register("agg", handlerAgg)
+	all_commands.register("addfeed", handlerAddFeed)
+	all_commands.register("feeds", handlerFeeds)
+	all_commands.register("follow", handlerFollow)
 
 	args_input := os.Args
 	if len(args_input) < 2 {

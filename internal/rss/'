@@ -1,0 +1,21 @@
+package rss
+
+import (
+	"context"
+	"net/http"
+)
+
+func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
+
+	// create http client
+	client := http.Client{}
+
+	// create request
+	var body []byte
+	req, err := http.NewRequestWithContext(ctx, "GET", feedURL, nil)
+
+	// do request
+
+	// put xml into useful structs
+
+}
