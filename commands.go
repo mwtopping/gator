@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"gator/internal/database"
 	"gator/internal/rss"
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type command struct {
@@ -220,8 +222,28 @@ func handlerUnfollow(s *state, cmd command) error {
 	return nil
 }
 
-//Write an aggregation function, I called mine scrapeFeeds. It should:
-//
+func handlerBrowse(s *state, cmd command) error {
+
+	user, err := s.db.GetUser(context.Background(), s.cfg.Username)
+	if err != nil {
+		fmt.Println("Unable to get User")
+		fmt.Println(err)
+		return err
+	}
+
+	getpostparams := database.GetPostsForUserParams{
+		UserID: user.ID,
+		Limit:  10,
+	}
+
+	result, err := s.db.GetPostsForUser(context.Background(), getpostparams)
+
+	for _, res := range result {
+		fmt.Println(res.Title)
+	}
+
+	return nil
+}
 
 func scrapeFeeds(s *state) error {
 
@@ -252,8 +274,23 @@ func scrapeFeeds(s *state) error {
 
 	//    Iterate over the items in the feed and print their titles to the console.
 	fmt.Printf("Showing titles for feed: %v\n", feedResult.Channel.Title)
+
+	//}
+
 	for _, item := range feedResult.Channel.Item {
 		fmt.Printf("%v\n", item.Title)
+		pubdate, _ := time.Parse("01/02 03:04:05PM '06 -0700", item.PubDate)
+		newpost := database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: sql.NullString{String: item.Description, Valid: true},
+			PublishedAt: pubdate,
+			FeedID:      nextFeed.ID}
+		s.db.CreatePost(context.Background(), newpost)
+
 	}
 
 	return nil

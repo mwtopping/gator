@@ -111,6 +111,7 @@ func (q *Queries) GetFeedUser(ctx context.Context, id uuid.UUID) (string, error)
 const getNextFeedToFetch = `-- name: GetNextFeedToFetch :one
 SELECT id, created_at, updated_at, last_fetched_at, name, url, user_id FROM feeds
   ORDER BY last_fetched_at ASC NULLS FIRST
+  LIMIT 1
 `
 
 func (q *Queries) GetNextFeedToFetch(ctx context.Context) (Feed, error) {
